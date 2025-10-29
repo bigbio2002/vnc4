@@ -31,3 +31,4 @@ xdialog-6_gismo-20061108.patch
 xvnc4-randr-patch-20060603.patch
 vnc4-4.1.1+X4.3.0+572678.patch
 ipv6-support.patch
+char-constant-syntax.patch

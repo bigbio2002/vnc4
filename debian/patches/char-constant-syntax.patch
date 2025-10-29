@@ -1,0 +1,15 @@
+--- ./unix/tx/TXWindow.cxx.old	2025-10-28 21:29:41.450774334 -0400
++++ ./unix/tx/TXWindow.cxx	2025-10-28 21:30:13.290762875 -0400
+@@ -87,10 +87,10 @@
+   XSetFont(dpy, defaultGC, defaultFont);
+   XSelectInput(dpy, DefaultRootWindow(dpy), PropertyChangeMask);
+ 
+-  static char dotBits[] = { 0x06, 0x0f, 0x0f, 0x06};
++  static char dotBits[] = { '\x06', '\x0f', '\x0f', '\x06' };
+   dot = XCreateBitmapFromData(dpy, DefaultRootWindow(dpy), dotBits,
+                               dotSize, dotSize);
+-  static char tickBits[] = { 0x80, 0xc0, 0xe2, 0x76, 0x3e, 0x1c, 0x08, 0x00};
++  static char tickBits[] = { '\x80', '\xc0', '\xe2', '\x76', '\x3e', '\x1c', '\x08', '\x00' };
+   tick = XCreateBitmapFromData(dpy, DefaultRootWindow(dpy), tickBits,
+                                tickSize, tickSize);
+   defaultWindowClass = rfb::strDup(defaultWindowClass_);

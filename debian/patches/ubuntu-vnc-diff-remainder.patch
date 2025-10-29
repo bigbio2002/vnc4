@@ -832,22 +832,6 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support
  
     if (ioctl( fd, KIOCSRATE, &kbdrate_s ))
       return 0;
-diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_video.c vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_video.c
---- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_video.c	2003-02-17 10:29:22.000000000 -0500
-+++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_video.c	2025-10-24 03:58:16.723598086 -0400
-@@ -67,6 +67,12 @@
- 
- #endif
- 
-+#ifdef __x86_64__
-+#ifndef BITS_PER_LONG
-+#define BITS_PER_LONG 64
-+#endif
-+#endif
-+
- #ifdef __alpha__
- 
- # ifdef LIBC_IS_FIXED
 diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc
 --- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc	2005-03-10 10:52:58.000000000 -0500
 +++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc	2025-10-24 03:50:54.099598255 -0400
