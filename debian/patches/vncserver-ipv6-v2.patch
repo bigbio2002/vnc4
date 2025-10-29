@@ -1,6 +1,6 @@
 --- orig/vnc4-4.1.1+X4.3.0/common/network/TcpSocket.cxx	2009-10-13 03:39:50.000000000 +0600
 +++ vnc4-4.1.1+X4.3.0/common/network/TcpSocket.cxx	2009-10-14 01:41:55.451051305 +0600
-@@ -314,9 +314,38 @@
+@@ -283,9 +283,38 @@
      return;
    }
  
@@ -41,7 +41,7 @@
  
  #ifndef WIN32
    // - By default, close the socket on exec()
-@@ -333,14 +354,25 @@
+@@ -302,14 +331,25 @@
  
    // - Bind it to the desired port
    struct sockaddr_in addr;

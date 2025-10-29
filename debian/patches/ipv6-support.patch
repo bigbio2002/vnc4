@@ -139,7 +139,7 @@ diff -Nurd vnc4-4.1.1+X4.3.0/unix/vncviewer/CConn.cxx vnc4-4.1.1+X4.3.0/unix/vnc
    : dpy(dpy_), argc(argc_),
      argv(argv_), serverHost(0), serverPort(0), sock(sock_), viewport(0),
      desktop(0), desktopEventHandler(0),
-@@ -106,7 +106,7 @@
+@@ -112,7 +112,7 @@
        }
      }
  
@@ -163,7 +163,7 @@ diff -Nurd vnc4-4.1.1+X4.3.0/unix/vncviewer/CConn.h vnc4-4.1.1+X4.3.0/unix/vncvi
 diff -Nurd vnc4-4.1.1+X4.3.0/unix/vncviewer/vncviewer.cxx vnc4-4.1.1+X4.3.0/unix/vncviewer/vncviewer.cxx
 --- vnc4-4.1.1+X4.3.0/unix/vncviewer/vncviewer.cxx	2009-06-03 16:59:51.000000000 -0700
 +++ vnc4-4.1.1+X4.3.0/unix/vncviewer/vncviewer.cxx	2009-06-03 16:57:40.000000000 -0700
-@@ -152,7 +152,7 @@
+@@ -153,7 +153,7 @@
  static void usage()
  {
    fprintf(stderr,
@@ -172,7 +172,7 @@ diff -Nurd vnc4-4.1.1+X4.3.0/unix/vncviewer/vncviewer.cxx vnc4-4.1.1+X4.3.0/unix
            "       %s [parameters] -listen [port] [parameters]\n",
            programName,programName);
    fprintf(stderr,"\n"
-@@ -239,8 +239,16 @@
+@@ -240,8 +240,16 @@
    programName = argv[0];
    char* vncServerName = 0;
    Display* dpy = 0;
@@ -189,7 +189,7 @@ diff -Nurd vnc4-4.1.1+X4.3.0/unix/vncviewer/vncviewer.cxx vnc4-4.1.1+X4.3.0/unix
      if (Configuration::setParam(argv[i]))
        continue;
  
-@@ -313,7 +321,7 @@
+@@ -318,7 +326,7 @@
  
      TXWindow::init(dpy, "Vncviewer");
      xloginIconifier.iconify(dpy);

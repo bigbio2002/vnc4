@@ -1,7 +1,7 @@
 diff -u vnc4-4.1.1+xorg4.3.0/common/network/TcpSocket.h vnc4-4.1.1+xorg4.3.0/common/network/TcpSocket.h
 --- vnc4-4.1.1+xorg4.3.0/common/network/TcpSocket.h
 +++ vnc4-4.1.1+xorg4.3.0/common/network/TcpSocket.h
-@@ -59,8 +59,7 @@
+@@ -58,8 +58,7 @@
      virtual void shutdown();
  
      static bool enableNagles(int sock, bool enable);
@@ -14,7 +14,7 @@ diff -u vnc4-4.1.1+xorg4.3.0/common/network/TcpSocket.h vnc4-4.1.1+xorg4.3.0/com
 diff -u vnc4-4.1.1+xorg4.3.0/common/network/TcpSocket.cxx vnc4-4.1.1+xorg4.3.0/common/network/TcpSocket.cxx
 --- vnc4-4.1.1+xorg4.3.0/common/network/TcpSocket.cxx
 +++ vnc4-4.1.1+xorg4.3.0/common/network/TcpSocket.cxx
-@@ -282,18 +282,12 @@
+@@ -257,18 +257,12 @@
    return true;
  }
  

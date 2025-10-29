@@ -1,6 +1,6 @@
 --- buildtemp/unix/xc/programs/Xserver/vnc/module/Imakefile~	2004-08-19 12:42:56.000000000 +0200
 +++ buildtemp/unix/xc/programs/Xserver/vnc/module/Imakefile	2004-08-19 22:51:01.000000000 +0200
-@@ -13,7 +13,7 @@
+@@ -14,7 +14,7 @@
  INCLUDES = -I.. -I../../include -I$(EXTINCSRC) -I$(XINCLUDESRC) \
             -I$(FONTINCSRC) -I$(XF86COMSRC) \
             $(VNCINCLUDE)

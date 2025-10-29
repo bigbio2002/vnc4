@@ -20,19 +20,10 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/Makefile.in vnc4-4.1.1+X4.3.0.orig/
 +DIR_CFLAGS = -DPIC -fPIC
 +DIR_CXXFLAGS = -DPIC -fPIC
  # followed by boilerplate.mk
-diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/network/Makefile.in vnc4-4.1.1+X4.3.0.orig/common/network/Makefile.in
---- vnc4-4.1.1+X4.3.0.orig_old/common/network/Makefile.in	2006-02-22 15:15:16.000000000 +1100
-+++ vnc4-4.1.1+X4.3.0.orig/common/network/Makefile.in	2006-02-22 15:16:24.000000000 +1100
-@@ -17,4 +17,5 @@
- DIR_CFLAGS = -DPIC -fPIC
- DIR_CXXFLAGS = -DPIC -fPIC
- 
-+DIR_CXXFLAGS = -DPIC -fPIC
- # followed by boilerplate.mk
 diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/network/TcpSocket.cxx vnc4-4.1.1+X4.3.0.orig/common/network/TcpSocket.cxx
 --- vnc4-4.1.1+X4.3.0.orig_old/common/network/TcpSocket.cxx	2005-03-12 02:08:41.000000000 +1100
 +++ vnc4-4.1.1+X4.3.0.orig/common/network/TcpSocket.cxx	2006-02-22 15:16:24.000000000 +1100
-@@ -54,6 +54,29 @@
+@@ -55,6 +55,29 @@
  
  static rfb::LogWriter vlog("TcpSocket");
  
@@ -62,7 +53,7 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/network/TcpSocket.cxx vnc4-4.1.1+X4
  
  // -=- Socket initialisation
  static bool socketsInitialised = false;
-@@ -117,10 +140,14 @@
+@@ -118,10 +141,14 @@
    }
  
    // Attempt to connect to the remote host
@@ -99,25 +90,6 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/network/TcpSocket.h vnc4-4.1.1+X4.3
    class TcpSocket : public Socket {
    public:
      TcpSocket(int sock, bool close=true);
-diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/rdr/Makefile.in vnc4-4.1.1+X4.3.0.orig/common/rdr/Makefile.in
---- vnc4-4.1.1+X4.3.0.orig_old/common/rdr/Makefile.in	2006-02-22 15:15:16.000000000 +1100
-+++ vnc4-4.1.1+X4.3.0.orig/common/rdr/Makefile.in	2006-02-22 15:16:24.000000000 +1100
-@@ -19,4 +19,5 @@
- DIR_CFLAGS = -DPIC -fPIC
- DIR_CXXFLAGS = -DPIC -fPIC
- 
-+DIR_CXXFLAGS = -DPIC -fPIC
- # followed by boilerplate.mk
-diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/rfb/Makefile.in vnc4-4.1.1+X4.3.0.orig/common/rfb/Makefile.in
---- vnc4-4.1.1+X4.3.0.orig_old/common/rfb/Makefile.in	2006-02-22 15:15:16.000000000 +1100
-+++ vnc4-4.1.1+X4.3.0.orig/common/rfb/Makefile.in	2006-02-22 15:16:24.000000000 +1100
-@@ -68,4 +68,6 @@
- DIR_CFLAGS = -DPIC -fPIC
- DIR_CXXFLAGS = -DPIC -fPIC
- 
-+DIR_CFLAGS = -DPIC -fPIC
-+DIR_CXXFLAGS = -DPIC -fPIC
- # followed by boilerplate.mk
 diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/rfb/ServerCore.cxx vnc4-4.1.1+X4.3.0.orig/common/rfb/ServerCore.cxx
 --- vnc4-4.1.1+X4.3.0.orig_old/common/rfb/ServerCore.cxx	2005-03-12 02:08:41.000000000 +1100
 +++ vnc4-4.1.1+X4.3.0.orig/common/rfb/ServerCore.cxx	2006-02-22 15:16:24.000000000 +1100
@@ -130,15 +102,6 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/rfb/ServerCore.cxx vnc4-4.1.1+X4.3.
  rfb::IntParameter rfb::Server::clientWaitTimeMillis
  ("ClientWaitTimeMillis",
   "The number of milliseconds to wait for a client which is no longer "
-diff -Naur vnc4-4.1.1+X4.3.0.orig_old/common/Xregion/Makefile.in vnc4-4.1.1+X4.3.0.orig/common/Xregion/Makefile.in
---- vnc4-4.1.1+X4.3.0.orig_old/common/Xregion/Makefile.in	2006-02-22 15:15:16.000000000 +1100
-+++ vnc4-4.1.1+X4.3.0.orig/common/Xregion/Makefile.in	2006-02-22 15:16:24.000000000 +1100
-@@ -15,4 +15,5 @@
- DIR_CFLAGS = -DPIC -fPIC
- DIR_CXXFLAGS = -DPIC -fPIC
- 
-+DIR_CFLAGS = -DPIC -fPIC
- # followed by boilerplate.mk
 diff -Naur vnc4-4.1.1+X4.3.0.orig_old/unix/configure.in vnc4-4.1.1+X4.3.0.orig/unix/configure.in
 --- vnc4-4.1.1+X4.3.0.orig_old/unix/configure.in	2005-01-12 03:37:17.000000000 +1100
 +++ vnc4-4.1.1+X4.3.0.orig/unix/configure.in	2006-02-22 15:16:24.000000000 +1100
@@ -170,7 +133,7 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/unix/configure.in vnc4-4.1.1+X4.3.0.orig/u
 diff -Naur vnc4-4.1.1+X4.3.0.orig_old/unix/vncserver vnc4-4.1.1+X4.3.0.orig/unix/vncserver
 --- vnc4-4.1.1+X4.3.0.orig_old/unix/vncserver	2005-02-23 23:28:18.000000000 +1100
 +++ vnc4-4.1.1+X4.3.0.orig/unix/vncserver	2006-02-22 15:16:24.000000000 +1100
-@@ -42,6 +42,10 @@
+@@ -52,6 +52,10 @@
  
  $defaultXStartup
      = ("#!/bin/sh\n\n".
@@ -181,7 +144,7 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/unix/vncserver vnc4-4.1.1+X4.3.0.orig/unix
         "[ -r \$HOME/.Xresources ] && xrdb \$HOME/.Xresources\n".
         "xsetroot -solid grey\n".
         "vncconfig -iconic &\n".
-@@ -116,18 +120,12 @@
+@@ -210,18 +214,12 @@
  $desktopLog = "$vncUserDir/$host:$displayNumber.log";
  unlink($desktopLog);
  
@@ -227,7 +190,7 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/unix/vncviewer/vncviewer.cxx vnc4-4.1.1+X4
  char aboutText[256];
  char* programName;
  extern char buildtime[];
-@@ -157,6 +161,61 @@
+@@ -162,6 +166,61 @@
    exit(1);
  }
  
@@ -289,7 +252,7 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/unix/vncviewer/vncviewer.cxx vnc4-4.1.1+X4
  int main(int argc, char** argv)
  {
    sprintf(aboutText, "VNC Viewer Free Edition 4.1.1 for X - built %s\n"
-@@ -190,8 +249,6 @@
+@@ -195,8 +254,6 @@
        usage();
      }
  
@@ -298,7 +261,7 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/unix/vncviewer/vncviewer.cxx vnc4-4.1.1+X4
      vncServerName = argv[i];
    }
  
-@@ -207,6 +264,19 @@
+@@ -212,6 +269,19 @@
      vlog.error("Could not create .vnc directory: environment variable $HOME not set.");
  
    try {

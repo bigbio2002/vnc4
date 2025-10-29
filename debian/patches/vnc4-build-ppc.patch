@@ -17,7 +17,7 @@ Andreas Jochens
 diff -urN ../tmp-orig/vnc4-4.1.1+X4.3.0/unix/xc/config/cf/linux.cf ./unix/xc/config/cf/linux.cf
 --- ../tmp-orig/vnc4-4.1.1+X4.3.0/unix/xc/config/cf/linux.cf	2006-04-21 11:53:04.000000000 +0000
 +++ ./unix/xc/config/cf/linux.cf	2006-04-21 09:02:32.000000000 +0000
-@@ -818,7 +818,11 @@
+@@ -820,7 +820,11 @@
  # endif
  # define LinuxMachineDefines	-D__powerpc__
  # define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME -DPART_NET

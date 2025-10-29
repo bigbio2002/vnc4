@@ -1,6 +1,6 @@
 --- ./common/network/TcpSocket.cxx	2012-02-05 17:04:07 +0000
 +++ ./common/network/TcpSocket.cxx	2012-02-05 17:06:16 +0000
-@@ -260,6 +260,7 @@
+@@ -207,6 +207,7 @@
    VNC_SOCKLEN_T addrlen = sizeof(struct sockaddr_in);
  
    getpeername(getFd(), (struct sockaddr *)&peeraddr, &addrlen);
