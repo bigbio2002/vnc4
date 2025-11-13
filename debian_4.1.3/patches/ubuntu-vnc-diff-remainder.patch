@@ -1,0 +1,868 @@
+diff -Naur vnc4-4.1.1+X4.3.0.orig/common/Xregion/Makefile.in vnc4-4.1.1+X4.3.0.orig_monopatch/common/Xregion/Makefile.in
+--- vnc4-4.1.1+X4.3.0.orig/common/Xregion/Makefile.in	2004-07-07 10:21:49.000000000 -0400
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/common/Xregion/Makefile.in	2025-10-24 03:50:54.091598255 -0400
+@@ -12,4 +12,7 @@
+ 	$(AR) $(library) $(OBJS)
+ 	$(RANLIB) $(library)
+ 
++DIR_CFLAGS = -DPIC -fPIC
++DIR_CXXFLAGS = -DPIC -fPIC
++
+ # followed by boilerplate.mk
+diff -Naur vnc4-4.1.1+X4.3.0.orig/common/network/Makefile.in vnc4-4.1.1+X4.3.0.orig_monopatch/common/network/Makefile.in
+--- vnc4-4.1.1+X4.3.0.orig/common/network/Makefile.in	2004-07-07 10:21:49.000000000 -0400
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/common/network/Makefile.in	2025-10-24 03:50:54.079598255 -0400
+@@ -14,4 +14,7 @@
+ 	$(AR) $(library) $(OBJS)
+ 	$(RANLIB) $(library)
+ 
++DIR_CFLAGS = -DPIC -fPIC
++DIR_CXXFLAGS = -DPIC -fPIC
++
+ # followed by boilerplate.mk
+diff -Naur vnc4-4.1.1+X4.3.0.orig/common/rdr/Makefile.in vnc4-4.1.1+X4.3.0.orig_monopatch/common/rdr/Makefile.in
+--- vnc4-4.1.1+X4.3.0.orig/common/rdr/Makefile.in	2004-07-07 12:38:31.000000000 -0400
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/common/rdr/Makefile.in	2025-10-24 03:50:54.087598255 -0400
+@@ -16,4 +16,7 @@
+ 	$(AR) $(library) $(OBJS)
+ 	$(RANLIB) $(library)
+ 
++DIR_CFLAGS = -DPIC -fPIC
++DIR_CXXFLAGS = -DPIC -fPIC
++
+ # followed by boilerplate.mk
+diff -Naur vnc4-4.1.1+X4.3.0.orig/common/rfb/Makefile.in vnc4-4.1.1+X4.3.0.orig_monopatch/common/rfb/Makefile.in
+--- vnc4-4.1.1+X4.3.0.orig/common/rfb/Makefile.in	2005-02-28 05:55:05.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/common/rfb/Makefile.in	2025-10-24 03:50:54.087598255 -0400
+@@ -65,4 +65,7 @@
+ 	$(AR) $(library) $(OBJS)
+ 	$(RANLIB) $(library)
+ 
++DIR_CFLAGS = -DPIC -fPIC
++DIR_CXXFLAGS = -DPIC -fPIC
++
+ # followed by boilerplate.mk
+diff -Naur vnc4-4.1.1+X4.3.0.orig/common/rfb/SConnection.cxx vnc4-4.1.1+X4.3.0.orig_monopatch/common/rfb/SConnection.cxx
+--- vnc4-4.1.1+X4.3.0.orig/common/rfb/SConnection.cxx	2005-03-11 10:08:41.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/common/rfb/SConnection.cxx	2025-10-23 07:26:04.714999736 -0400
+@@ -191,6 +191,16 @@
+   vlog.info("Client requests security type %s(%d)",
+             secTypeName(secType),secType);
+ 
++  std::list<rdr::U8> secTypes;
++  std::list<rdr::U8>::iterator i;
++  securityFactory->getSecTypes(&secTypes, reverseConnection);
++  for (i=secTypes.begin(); i!=secTypes.end(); i++)
++    if (*i == secType)
++      break;
++
++  if (*i != secType)
++    throwConnFailedException("Unexpected security type");
++
+   try {
+     state_ = RFBSTATE_SECURITY;
+     security = securityFactory->getSSecurity(secType, reverseConnection);
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/boilerplate.mk vnc4-4.1.1+X4.3.0.orig_monopatch/unix/boilerplate.mk
+--- vnc4-4.1.1+X4.3.0.orig/unix/boilerplate.mk	2004-07-07 10:21:49.000000000 -0400
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/boilerplate.mk	2025-10-23 07:26:04.730999736 -0400
+@@ -15,7 +15,7 @@
+ CFLAGS = @CFLAGS@ $(DIR_CFLAGS)
+ CCLD = $(CC)
+ CXX = @CXX@
+-CXXFLAGS = @CXXFLAGS@
++CXXFLAGS = @CXXFLAGS@ $(DIR_CXXFLAGS)
+ CXXLD = $(CXX)
+ CPPFLAGS = @CPPFLAGS@
+ DEFS = @DEFS@
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/tx/TXScrollbar.cxx vnc4-4.1.1+X4.3.0.orig_monopatch/unix/tx/TXScrollbar.cxx
+--- vnc4-4.1.1+X4.3.0.orig/unix/tx/TXScrollbar.cxx	2005-03-11 10:08:41.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/tx/TXScrollbar.cxx	2025-10-23 07:26:04.734999736 -0400
+@@ -44,8 +44,10 @@
+ 
+ void TXScrollbar::set(int limit_, int start_, int len_, bool vert)
+ {
+-  assert(limit_ > 0 && len_ >= 0 && len_ <= limit_);
++  // This assertion fails under certain window managers.
++  // assert(limit_ > 0 && len_ >= 0 && len_ <= limit_);
+ 
++  if (len_ > limit_) len_ = limit_;
+   if (start_ < 0) start_ = 0;
+   if (start_ > limit_ - len_) start_ = limit_ - len_;
+ 
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/vncpasswd/vncpasswd.cxx vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncpasswd/vncpasswd.cxx
+--- vnc4-4.1.1+X4.3.0.orig/unix/vncpasswd/vncpasswd.cxx	2005-03-11 10:08:41.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncpasswd/vncpasswd.cxx	2025-10-23 07:26:04.734999736 -0400
+@@ -117,6 +117,9 @@
+       continue;
+     }
+ 
++    if (strlen(passwd.buf) > 8)
++      fprintf(stderr,"Password too long - only the first 8 characters will be used\n");
++
+     FILE* fp = fopen(fname,"w");
+     if (!fp) {
+       fprintf(stderr,"Couldn't open %s for writing\n",fname);
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/vncserver vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncserver
+--- vnc4-4.1.1+X4.3.0.orig/unix/vncserver	2005-02-23 07:28:18.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncserver	2025-10-24 03:50:54.095598255 -0400
+@@ -1,5 +1,6 @@
+ #!/usr/bin/env perl
+ #
++#  Copyright (C) 2004-2006 Ola Lundqvist <opal@debian.org>
+ #  Copyright (C) 2002-2005 RealVNC Ltd.
+ #  Copyright (C) 1999 AT&T Laboratories Cambridge.  All Rights Reserved.
+ #
+@@ -23,6 +24,13 @@
+ # vncserver - wrapper script to start an X VNC server.
+ #
+ 
++# This file was heavily edited by Ola Lundqvist <opal@debian.org> using
++# options from vnc package.
++# Most modifications are written by Marcus.Brinkmann@ruhr-uni-bochum.de and
++# now incorporated by Ola.
++
++# Please report all errors to Debian and not to ORL.
++
+ #
+ # First make sure we're operating in a sane environment.
+ #
+@@ -35,8 +43,10 @@
+ 
+ $geometry = "1024x768";
+ $depth = 16;
+-$vncJavaFiles = (((-d "/usr/share/vnc/classes") && "/usr/share/vnc/classes") ||
++$vncJavaFiles = (((-d "/usr/share/vnc-java") && "/usr/share/vnc-java") ||
++		 ((-d "/usr/share/vnc/classes") && "/usr/share/vnc/classes") ||
+                  ((-d "/usr/local/vnc/classes") && "/usr/local/vnc/classes"));
++
+ $vncUserDir = "$ENV{HOME}/.vnc";
+ $xauthorityFile = "$ENV{XAUTHORITY}" || "$ENV{HOME}/.Xauthority";
+ 
+@@ -45,8 +55,59 @@
+        "[ -r \$HOME/.Xresources ] && xrdb \$HOME/.Xresources\n".
+        "xsetroot -solid grey\n".
+        "vncconfig -iconic &\n".
+-       "xterm -geometry 80x24+10+10 -ls -title \"\$VNCDESKTOP Desktop\" &\n".
+-       "twm &\n");
++       "x-terminal-emulator -geometry 80x24+10+10 -ls -title \"\$VNCDESKTOP Desktop\" &\n".
++       "x-window-manager &\n");
++
++######## Adding configuration possibility ################
++$Config_file = "/etc/vnc.conf";
++&ReadConfigFile();
++$Config_file = "$ENV{HOME}/.vncrc";
++&ReadConfigFile();
++
++if (!$XFConfigPath) {
++  foreach ("/etc/X11/xorg.conf", "/etc/X11/XF86Config-4", "/etc/X11/XF86Config" ){
++    $XFConfigPath = $_;
++    last if ( -e $XFConfigPath );
++  }
++}
++if (!$fontPath) {
++  &ReadXFConfigFont;
++}
++if (!$fontPath) {
++  $fontPath = "/usr/X11R6/lib/X11/fonts/Type1/,".
++              "/usr/X11R6/lib/X11/fonts/Speedo/,".
++              "/usr/X11R6/lib/X11/fonts/misc/,".
++              "/usr/X11R6/lib/X11/fonts/75dpi/,".
++              "/usr/X11R6/lib/X11/fonts/100dpi/,".
++              "/usr/share/fonts/X11/misc/,".
++      	      "/usr/share/fonts/X11/Type1/,".
++              "/usr/share/fonts/X11/75dpi/,".
++              "/usr/share/fonts/X11/100dpi/"
++}
++if (!$colorPath) {
++  &ReadXFConfigColor;
++}
++if (!$colorPath) {
++  foreach ("/etc/X11/rgb", "/usr/share/X11/rgb", "/usr/X11R6/lib/X11/rgb"){
++      $colorPath = $_;
++      last if ( -e "${colorPath}.txt" );
++  }
++}
++
++##########################################################
++
++$vncUserDirUnderTmp = ($vncUserDir =~ m|^/tmp/.+|) ? 1 : 0;
++$xstartup = ($vncUserDirUnderTmp) ?
++  "$ENV{HOME}/.vncstartup" : "$vncUserDir/xstartup";
++$xstartup = $vncStartup if ($vncStartup);
++
++unless ($xauthorityFile) {
++    if ($vncUserDirUnderTmp) {
++        $xauthorityFile = "$vncUserDir/.Xauthority";
++    } else {
++        $xauthorityFile = "$ENV{HOME}/.Xauthority";
++    }
++}
+ 
+ chop($host = `uname -n`);
+ 
+@@ -54,12 +115,22 @@
+ # Check command line options
+ 
+ &ParseOptions("-geometry",1,"-depth",1,"-pixelformat",1,"-name",1,"-kill",1,
+-	      "-help",0,"-h",0,"--help",0);
++	      "-help",0,"-h",0,"--help",0,
++	      "-clean",0, "-fp",1,
++	      "-alwaysshared",0, "-nevershared",0,
++	      "-httpport",1,"-basehttpport",1);
+ 
+ &Usage() if ($opt{'-help'} || $opt{'-h'} || $opt{'--help'});
+ 
+ &Kill() if ($opt{'-kill'});
+ 
++$useClasses = 0;
++if (defined $vncJavaFiles) {
++  if(-d $vncJavaFiles) {
++      $useClasses = 1;
++  }
++}
++
+ # Uncomment this line if you want default geometry, depth and pixelformat
+ # to match the current X display:
+ # &GetXDisplayDefaults();
+@@ -75,8 +146,26 @@
+     $pixelformat = $opt{'-pixelformat'};
+ }
+ 
+-&CheckGeometryAndDepth();
++if ($opt{'-fp'}) {
++    @fontPathElements = split(/\s*,\s*/, "$opt{'-fp'}");
+ 
++    $fontPath = '';
++
++    foreach $i (0.."$#fontPathElements") {
++       $tempFontPath = $fontPathElements[$i];
++       if ($tempFontPath !~ m!^[^/]*/[^/]*:\d+$!) {
++           $tempFontPath =~ s/:unscaled$//;
++           if (-r "$tempFontPath/fonts.dir") {
++               $fontPath .= "$fontPathElements[$i],";
++           }
++       } else {
++           $fontPath .= "$fontPathElements[$i],";
++       }
++    }
++    chop $fontPath;
++}
++
++&CheckGeometryAndDepth();
+ 
+ # Create the user's vnc directory if necessary.
+ 
+@@ -85,13 +174,18 @@
+ 	die "$prog: Could not create $vncUserDir.\n";
+     }
+ }
+-    
++
++($z,$z,$mode) = stat("$vncUserDir");
++if (!-d _ || !-o _ || ($vncUserDirUnderTmp && ($mode & 0777) != 0700)) {
++    die "$prog: Wrong type or access mode of $vncUserDir.\n";
++}
++
+ # Make sure the user has a password.
+ 
+ ($z,$z,$mode) = stat("$vncUserDir/passwd");
+ if (!(-e "$vncUserDir/passwd") || ($mode & 077)) {
+     warn "\nYou will require a password to access your desktops.\n\n";
+-    system("vncpasswd -q $vncUserDir/passwd"); 
++    system("vncpasswd $vncUserDir/passwd"); 
+     if (($? >> 8) != 0) {
+ 	exit 1;
+     }
+@@ -137,11 +231,31 @@
+ 
+ # Now start the X VNC Server
+ 
+-$cmd = "Xvnc :$displayNumber";
++$cmd = "Xvnc4 :$displayNumber";
+ $cmd .= " -desktop " . &quotedString($desktopName);
+-$cmd .= " -httpd $vncJavaFiles" if ($vncJavaFiles);
++if ($useClasses) {
++  $cmd .= " -httpd $vncJavaFiles";
++  print ("Found $vncJavaFiles for http connections.\n");
++  if ($opt{'-httpport'}) {
++    $cmd .= " -httpport $opt{'-httpport'}";
++    print ("Listening to $opt{'-httpport'} for http connections.\n");
++  }
++  elsif ($opt{'-basehttpport'}) {
++    my $v = $opt{'-basehttpport'} + $displayNumber;
++    print ("Listening to $v for http connections.\n");
++    $cmd .= " -httpport $v";
++  }
++}
+ $cmd .= " -auth $xauthorityFile";
+-$cmd .= " -geometry $geometry" if ($geometry);
++if ($geometry) {
++  if ($#$geometry==-1) {
++    $cmd .= " -geometry $geometry";
++  } else {
++    foreach $i (0..$#$geometry) {
++      $cmd .= " -geometry $geometry->[$i]";
++    }
++  }
++}
+ $cmd .= " -depth $depth" if ($depth);
+ $cmd .= " -pixelformat $pixelformat" if ($pixelformat);
+ $cmd .= " -rfbwait 30000";
+@@ -154,6 +268,10 @@
+ # $cmd .= " -fp /usr/lib/X11/fonts/misc/,/usr/lib/X11/fonts/75dpi/";
+ # $cmd .= " -co /usr/lib/X11/rgb";
+ #
++$cmd .= " -fp $fontPath" if ($fontPath);
++$cmd .= " -co $colorPath" if ($colorPath);
++$cmd .= " -alwaysshared" if ($opt{'-alwaysshared'});
++$cmd .= " -nevershared" if ($opt{'-nevershared'});
+ 
+ foreach $arg (@ARGV) {
+     $cmd .= " " . &quotedString($arg);
+@@ -165,7 +283,7 @@
+ $pidFile = "$vncUserDir/$host:$displayNumber.pid";
+ system("$cmd & echo \$! >$pidFile");
+ 
+-# Give Xvnc a chance to start up
++# Give Xvnc4 a chance to start up
+ 
+ sleep(3); 
+ 
+@@ -173,17 +291,17 @@
+ 
+ # Create the user's xstartup script if necessary.
+ 
+-if (!(-e "$vncUserDir/xstartup")) {
+-    warn "Creating default startup script $vncUserDir/xstartup\n";
+-    open(XSTARTUP, ">$vncUserDir/xstartup");
++if (!(-e "$xstartup")) {
++    warn "Creating default startup script $xstartup\n";
++    open(XSTARTUP, ">$xstartup");
+     print XSTARTUP $defaultXStartup;
+     close(XSTARTUP);
+-    chmod 0755, "$vncUserDir/xstartup";
++    chmod 0755, "$xstartup";
+ }
+ 
+ # Run the X startup script.
+ 
+-warn "Starting applications specified in $vncUserDir/xstartup\n";
++warn "Starting applications specified in $xstartup\n";
+ warn "Log file is $desktopLog\n\n";
+ 
+ # If the unix domain socket exists then use that (DISPLAY=:n) otherwise use
+@@ -198,10 +316,70 @@
+ }
+ $ENV{VNCDESKTOP}= $desktopName;
+ 
+-system("$vncUserDir/xstartup >> " . &quotedString($desktopLog) . " 2>&1 &");
++system("$xstartup >> " . &quotedString($desktopLog) . " 2>&1 &");
+ 
+ exit;
+ 
++############################ Debian functions #################################
++# I thank Manoj for the code below.
++#
++# ReadConfigFile reads in a config file and sets variables according to it.
++#
++
++sub ReadConfigFile
++{
++  open(CONFIG, "$Config_file") || return;
++  my $lineno = 0;
++  while (<CONFIG>) {
++      chomp;
++      $lineno++;
++      s/\#.*//og;
++      next if /^\s*$/og;
++      $_ .= ";" unless /;\s*$/;
++      if (/^\s*([^=]+)\s*=\s*(\S.*)$/o) {
++          my $ret = eval "$1=$2";
++          if ($@) {
++              print STDERR "Error parsing config file $Config_file!\n";
++              print STDERR "$lineno:$_\n";
++          }
++      }
++  }
++}
++
++sub ReadXFConfigFont
++{
++  open(CONFIG, "$XFConfigPath") || return;
++  my $lineno = 0;
++  while (<CONFIG>) {
++      chomp;
++      $lineno++;
++      s/\#.*//og;
++      next if /^\s*$/og;
++      if (/^\s*FontPath\s*"(\S.*)"\s*$/o) {
++          $fontPath .= "," if $fontPath;
++          $fontPath .= $1;
++      }
++  }
++}
++
++sub ReadXFConfigColor
++{
++  open(CONFIG, "$XFConfigPath") || return;
++  my $lineno = 0;
++  while (<CONFIG> && !$colorPath) {
++      chomp;
++      $lineno++;
++      s/\#.*//og;
++      next if /^\s*$/og;
++      if (/^\s*RgbPath\s*"(\S.*)"\s*$/o) {
++          $colorPath = $1;
++      }
++  }
++}
++
++
++########## End of debian functions ###########
++
+ 
+ ###############################################################################
+ #
+@@ -209,9 +387,10 @@
+ # are sensible.
+ #
+ 
+-sub CheckGeometryAndDepth
++sub CheckGeometry
+ {
+-    if ($geometry =~ /^(\d+)x(\d+)$/) {
++   my $geometry=shift;
++   if ($geometry =~ /^(\d+)x(\d+)$/) {
+ 	$width = $1; $height = $2;
+ 
+ 	if (($width<1) || ($height<1)) {
+@@ -231,6 +410,19 @@
+ 	die "$prog: geometry $geometry is invalid\n";
+     }
+ 
++}
++
++sub CheckGeometryAndDepth
++{
++	if ($geometry) {
++	  if ($#$geometry==-1) {
++	    &CheckGeometry($geometry);
++	  } else {
++		 foreach $i (0..$#$geometry) {
++			&CheckGeometry($geometry->[$i]);
++		 }
++	  }
++	}
+     if (($depth < 8) || ($depth > 32)) {
+ 	die "Depth must be between 8 and 32\n";
+     }
+@@ -415,11 +607,25 @@
+ 
+ sub Usage
+ {
+-    die("\nusage: $prog [:<number>] [-name <desktop-name>] [-depth <depth>]\n".
+-	"                 [-geometry <width>x<height>]\n".
+-	"                 [-pixelformat rgbNNN|bgrNNN]\n".
+-	"                 <Xvnc-options>...\n\n".
+-	"       $prog -kill <X-display>\n\n");
++    die("VNC4 server\n".
++       "\n".
++       "Usage: $prog [<OPTIONS>] [:<DISPLAY#>]\n".
++       "       $prog -kill :<DISPLAY#>\n".
++       "\n".
++       "<OPTIONS> are Xvnc4 options, or:\n".
++       "\n".
++       "        -name <DESKTOP-NAME>\n".
++       "        -depth <DEPTH>\n".
++       "        -geometry <WIDTH>x<HEIGHT>\n".
++       "        -httpport number\n".
++       "        -basehttpport number\n".
++       "        -alwaysshared\n".
++       "        -nevershared\n".
++       "        -pixelformat rgb<NNN>\n".
++       "        -pixelformat bgr<NNN>\n".
++       "        <Xvnc4-options>...\n".
++       "\n".
++       "See vnc4server and Xvnc4 manual pages for more information.\n");
+ }
+ 
+ 
+@@ -443,12 +649,12 @@
+ 
+     if (! -r $pidFile) {
+ 	die "\nCan't find file $pidFile\n".
+-	    "You'll have to kill the Xvnc process manually\n\n";
++	    "You'll have to kill the Xvnc4 process manually\n\n";
+     }
+ 
+     $SIG{'HUP'} = 'IGNORE';
+     chop($pid = `cat $pidFile`);
+-    warn "Killing Xvnc process ID $pid\n";
++    warn "Killing Xvnc4 process ID $pid\n";
+     system("kill $pid");
+     unlink $pidFile;
+     exit;
+@@ -484,7 +690,13 @@
+ 		    if (@ARGV == 0) {
+ 			&Usage();
+ 		    }
+-		    $opt{$opt} = shift(@ARGV);
++		    if ($opt{$opt}) {
++		       # Convert scalar to array if necessary
++		       $opt{$opt} = [$opt{$opt}] if $#{$opt{$opt}}==-1;
++		       push(@{$opt{$opt}},shift(@ARGV));
++		    } else {
++		       $opt{$opt} = shift(@ARGV);
++		    }
+ 		    push(@optArgs, $opt{$opt});
+ 		} else {
+ 		    $opt{$opt} = 1;
+@@ -518,7 +730,7 @@
+     #
+ 
+  cmd:
+-    foreach $cmd ("uname","xauth","Xvnc","vncpasswd") {
++    foreach $cmd ("uname","xauth","Xvnc4","vncpasswd") {
+ 	for (split(/:/,$ENV{PATH})) {
+ 	    if (-x "$_/$cmd") {
+ 		next cmd;
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/vncserver.man vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncserver.man
+--- vnc4-4.1.1+X4.3.0.orig/unix/vncserver.man	2005-03-03 08:10:40.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncserver.man	2025-10-23 07:26:04.738999736 -0400
+@@ -53,6 +53,7 @@
+ .TP
+ .B \-geometry \fIwidth\fPx\fIheight\fP
+ Specify the size of the desktop to be created. Default is 1024x768. 
++Can be specified as an array or scalar for geometry.
+ 
+ .TP
+ .B \-depth \fIdepth\fP
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/vncviewer/CConn.cxx vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncviewer/CConn.cxx
+--- vnc4-4.1.1+X4.3.0.orig/unix/vncviewer/CConn.cxx	2005-03-11 10:08:41.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncviewer/CConn.cxx	2025-10-24 03:56:09.671598135 -0400
+@@ -245,9 +245,16 @@
+   fullColourPF = desktop->getPF();
+   if (!serverPF.trueColour)
+     fullColour = true;
+-  recreateViewport();
++  CharArray xEmbedStr(xEmbed.getData());
++  if (!xEmbedStr.buf[0])
++    recreateViewport();
+   formatChange = encodingChange = true;
+   requestNewUpdate();
++  if (xEmbedStr.buf[0]) {
++    unsigned int targetWindow = 0;
++    targetWindow = strtol(xEmbed.getData(), NULL, 0);
++    XReparentWindow(dpy, desktop->win(), (Window) targetWindow, 0, 0);
++  }
+ }
+ 
+ // setDesktopSize() is called when the desktop size changes (including when
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/vncviewer/parameters.h vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncviewer/parameters.h
+--- vnc4-4.1.1+X4.3.0.orig/unix/vncviewer/parameters.h	2005-03-11 10:08:41.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncviewer/parameters.h	2025-10-24 03:56:09.667598135 -0400
+@@ -37,6 +37,7 @@
+ extern rfb::BoolParameter sendPrimary;
+ extern rfb::BoolParameter fullScreen;
+ extern rfb::StringParameter geometry;
++extern rfb::StringParameter xEmbed;
+ 
+ extern char aboutText[];
+ extern char* programName;
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/vncviewer/vncviewer.cxx vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncviewer/vncviewer.cxx
+--- vnc4-4.1.1+X4.3.0.orig/unix/vncviewer/vncviewer.cxx	2005-03-11 10:08:41.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/vncviewer/vncviewer.cxx	2025-10-24 03:56:09.667598135 -0400
+@@ -94,6 +94,7 @@
+                          false);
+ StringParameter geometry("geometry", "X geometry specification", "");
+ StringParameter displayname("display", "The X display", "");
++StringParameter xEmbed("XEmbed", "Embed into another window with a given id", "");
+ 
+ char aboutText[256];
+ char* programName;
+@@ -251,7 +252,7 @@
+     vlog.info(e.str());
+   } catch (rdr::Exception& e) {
+     vlog.error(e.str());
+-    if (dpy) {
++    if (popupXDialog) {
+       TXMsgBox msgBox(dpy, e.str(), MB_OK, "VNC Viewer: Information");
+       msgBox.show();
+     }
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/x0vncserver/x0vncserver.cxx vnc4-4.1.1+X4.3.0.orig_monopatch/unix/x0vncserver/x0vncserver.cxx
+--- vnc4-4.1.1+X4.3.0.orig/unix/x0vncserver/x0vncserver.cxx	2005-03-11 10:08:41.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/x0vncserver/x0vncserver.cxx	2025-10-23 19:14:44.316842220 -0400
+@@ -36,7 +36,7 @@
+ #include <X11/Xlib.h>
+ #include <X11/Xutil.h>
+ #include <X11/extensions/XTest.h>
+-
++#include <iostream>
+ 
+ //#include <rfb/Encoder.h>
+ 
+@@ -307,6 +307,8 @@
+       TXWindow::handleXEvents(dpy);
+       
+       // Process expired timers and get the time until the next one
++      tv.tv_sec = 0;
++      tv.tv_usec = 100000;
+       int timeoutMs = Timer::checkTimeouts();
+       soonestTimeout(&timeoutMs, server.checkTimeouts());
+       if (timeoutMs) {
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/config/cf/X11.tmpl vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/config/cf/X11.tmpl
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/config/cf/X11.tmpl	2003-02-25 16:57:52.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/config/cf/X11.tmpl	2025-10-23 07:26:04.746999736 -0400
+@@ -738,7 +738,7 @@
+ #endif
+ #endif
+ #ifndef DefaultRGBDatabase
+-#define DefaultRGBDatabase $(LIBDIR)/rgb
++#define DefaultRGBDatabase /usr/share/X11/rgb
+ #endif
+ #ifndef UseRgbTxt
+ #define UseRgbTxt		NO	/* default is to compile with dbm */
+@@ -1548,7 +1548,7 @@
+            DOCDIR = DocDir
+        DOCHTMLDIR = DocHtmlDir
+          DOCPSDIR = DocPsDir
+-          FONTDIR = FontDir		/* font directories */
++          FONTDIR = /usr/share/fonts/X11		/* font directories */
+      ENCODINGSDIR = $(FONTDIR)/encodings /* font encodings directory */
+          XINITDIR = XinitDir		/* xinit config files */
+            XDMDIR = XdmDir		/* xdm config files */
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/config/cf/linux.cf vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/config/cf/linux.cf
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/config/cf/linux.cf	2003-02-17 12:07:32.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/config/cf/linux.cf	2025-10-24 03:58:01.391598092 -0400
+@@ -255,7 +255,9 @@
+ 
+ /* On x86, determine whether to build with MTRR support */
+ #ifndef HasMTRRSupport
+-# if defined (i386Architecture) || defined (x86_64Architecture)
++# if defined (i386Architecture)
++/* || defined (x86_64Architecture) */
++/* Temporarily disable MTRR support for amd64 arch */
+ /* There is no certain way to know if <asm/mtrr.h> is available,
+    but it made it into kernel 2.2, so... */
+ #  if OSMajorVersion > 2 || (OSMajorVersion == 2 && OSMinorVersion >= 2)
+@@ -313,6 +315,8 @@
+ #    define BuildXF86DRI	NO
+ #  endif
+ #endif
++#undef BuildXF86DRI
++#define BuildXF86DRI NO
+ 
+ /*
+  * Build shared libGL and the DRI modules without -fPIC on some architectures.
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/config/cf/vnc.def vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/config/cf/vnc.def
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/config/cf/vnc.def	2005-02-28 07:59:09.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/config/cf/vnc.def	2025-10-23 07:26:04.746999736 -0400
+@@ -5,7 +5,7 @@
+ #define BuildPexExt NO
+ #define BuildNls NO
+ #define BuildXIE NO
+-#define BuildGlxExt NO
++#define BuildGlxExt YES
+ #define XnestServer NO
+ #define XprtServer NO
+ 
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/Xext/Imakefile vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/Xext/Imakefile
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/Xext/Imakefile	2002-03-06 16:12:32.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/Xext/Imakefile	2025-10-23 07:26:04.750999736 -0400
+@@ -76,7 +76,7 @@
+ #if BuildXCSecurity
+     SECURITYSRCS = security.c
+     SECURITYOBJS = security.o
+- SERVERCONFIGDIR = ServerConfigDir
++ SERVERCONFIGDIR = /etc/X11/xserver
+    POLICYFILEDEF = -DDEFAULTPOLICYFILE=\"$(SERVERCONFIGDIR)/SecurityPolicy\"
+ #endif
+ #if BuildCup
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/common/compiler.h vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/common/compiler.h
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/common/compiler.h	2003-01-29 10:23:20.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/common/compiler.h	2025-10-24 03:57:38.735598101 -0400
+@@ -86,8 +86,8 @@
+ # endif
+ 
+ # if defined(NO_INLINE) || defined(DO_PROTOTYPES)
+-
+-#  if !defined(__sparc__) && !defined(__arm32__) \
++#  if !defined(__arm__)
++#   if !defined(__sparc__) && !defined(__arm32__) \
+       && !(defined(__alpha__) && defined(linux))
+ 
+ extern void outb(unsigned short, unsigned char);
+@@ -97,7 +97,7 @@
+ extern unsigned int inw(unsigned short);
+ extern unsigned int inl(unsigned short);
+ 
+-#  else /* __sparc__,  __arm32__, __alpha__*/
++#   else /* __sparc__,  __arm32__, __alpha__*/
+ 
+ extern void outb(unsigned long, unsigned char);
+ extern void outw(unsigned long, unsigned short);
+@@ -106,8 +106,8 @@
+ extern unsigned int inw(unsigned long);
+ extern unsigned int inl(unsigned long);
+ 
+-#  endif /* __sparc__,  __arm32__, __alpha__ */
+-
++#   endif /* __sparc__,  __arm32__, __alpha__ */
++#  endif /* __arm__ */
+ extern unsigned long ldq_u(unsigned long *);
+ extern unsigned long ldl_u(unsigned int *);
+ extern unsigned long ldw_u(unsigned short *);
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/fbdevhw/fbdevhw.c vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/fbdevhw/fbdevhw.c
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/fbdevhw/fbdevhw.c	2002-11-25 09:05:00.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/fbdevhw/fbdevhw.c	2025-10-23 07:26:04.754999736 -0400
+@@ -14,7 +14,15 @@
+ #include "fbdevhw.h"
+ #include "fbpriv.h"
+ 
+-#include "asm/page.h"	/* #define for PAGE_* */
++/* Added check so that asm/page.h is not included for hppa arch */
++/* Ola Lundqvist, to work around Debian Bug#485958 & Bug#486104*/
++#if !defined(__hppa__) && !defined(__mips__) && !defined(__alpha__)
++# include "asm/page.h"	/* #define for PAGE_* */
++#endif
++
++#ifndef PAGE_MASK
++#define PAGE_MASK (~(sysconf(_SC_PAGESIZE) - 1))
++#endif
+ 
+ #include "globals.h"
+ #define DPMS_SERVER
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/bus/xf86Sbus.h vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/bus/xf86Sbus.h
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/bus/xf86Sbus.h	2002-05-22 17:38:30.000000000 -0400
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/bus/xf86Sbus.h	2025-10-23 07:26:04.754999736 -0400
+@@ -27,6 +27,8 @@
+ 
+ #if defined(linux)
+ #include <asm/types.h>
++/* Next line is added by Ola Lundqvist to solve Debian Bug#477659. */
++#include <linux/fb.h>
+ #include <asm/fbio.h>
+ #include <asm/openpromio.h>
+ #elif defined(SVR4)
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx.h vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx.h
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx.h	2002-11-25 09:05:04.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx.h	2025-10-23 07:26:04.758999736 -0400
+@@ -8,7 +8,9 @@
+ 
+ /* new pciconfig_iobase syscall added in 2.2.15 and 2.3.99 */
+ #  include <linux/unistd.h>
+-#  include <asm/pci.h>
++/* No longer include asm/pci.h on alpha on Debian as it do not exist in any
++ * package (Ola Lundqvist) */
++/*  include <asm/pci.h>*/
+ extern long (*_iobase)(unsigned, int, int, int);
+ 
+ /*
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_axp.c vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_axp.c
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_axp.c	2002-11-25 09:05:04.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_axp.c	2025-10-23 07:26:04.758999736 -0400
+@@ -110,7 +110,9 @@
+  * pciconfig_iobase wrappers and dynamic i/o selection
+  */
+ #include <linux/unistd.h>
++#if !defined(__alpha__)
+ #include <asm/pci.h>
++#endif
+ #include <errno.h>
+ 
+ /* glibc versions (single hose only) */
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_io.c vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_io.c
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_io.c	2002-10-20 17:45:27.000000000 -0400
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_io.c	2025-10-24 03:57:08.075598113 -0400
+@@ -124,10 +124,10 @@
+    if (fd == -1) 
+      return 0;   
+ 
+-   kbdrate_s.rate = (rate + 5) / 10;  /* must be integer, so round up */
++   /*kbdrate_s.rate = (rate + 5) / 10;*/  /* must be integer, so round up */
+    kbdrate_s.delay = delay * HZ / 1000;  /* convert ms to Hz */
+-   if (kbdrate_s.rate > 50)
+-     kbdrate_s.rate = 50;
++   /*if (kbdrate_s.rate > 50)
++     kbdrate_s.rate = 50;*/
+ 
+    if (ioctl( fd, KIOCSRATE, &kbdrate_s ))
+      return 0;
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_kbd.c vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_kbd.c
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_kbd.c	2003-02-17 10:11:57.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/hw/xfree86/os-support/linux/lnx_kbd.c	2025-10-24 03:57:02.451598115 -0400
+@@ -107,19 +107,19 @@
+    struct kbd_repeat kbdrep_s;
+ 
+    /* don't change, just test */
+-   kbdrep_s.rate = -1;
++   /*kbdrep_s.rate = -1;*/
+    kbdrep_s.delay = -1;
+    if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
+        return 0;
+    }
+ 
+    /* do the change */
+-   if (rate == 0)				/* switch repeat off */
+-     kbdrep_s.rate = 0;
+-   else
+-     kbdrep_s.rate  = 10000 / rate;		/* convert cps to msec */
+-   if (kbdrep_s.rate < 1)
+-     kbdrep_s.rate = 1;
++   /*if (rate == 0)*/				/* switch repeat off */
++   /*  kbdrep_s.rate = 0;*/
++   /*else
++     kbdrep_s.rate  = 10000 / rate;*/		/* convert cps to msec */
++   /*if (kbdrep_s.rate < 1)
++     kbdrep_s.rate = 1;*/
+    kbdrep_s.delay = delay;
+    if (kbdrep_s.delay < 1)
+      kbdrep_s.delay = 1;
+@@ -144,10 +144,10 @@
+    if (fd == -1) 
+      return 0;   
+ 
+-   kbdrate_s.rate = (rate + 5) / 10;  /* must be integer, so round up */
++   /*kbdrate_s.rate = (rate + 5) / 10;*/  /* must be integer, so round up */
+    kbdrate_s.delay = delay * HZ / 1000;  /* convert ms to Hz */
+-   if (kbdrate_s.rate > 50)
+-     kbdrate_s.rate = 50;
++   /*if (kbdrate_s.rate > 50)
++     kbdrate_s.rate = 50;*/
+ 
+    if (ioctl( fd, KIOCSRATE, &kbdrate_s ))
+      return 0;
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc	2005-03-10 10:52:58.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc	2025-10-24 03:50:54.099598255 -0400
+@@ -1215,4 +1215,18 @@
+   RegisterKeyboardDevice(k);
+   miRegisterPointerDevice(screenInfo.screens[0], p);
+   (void)mieqInit ((DevicePtr)k, (DevicePtr)p);
++
++  // Use this point as a hook to set initial screen geometry
++  // We could not do it before vncExtensionInit() call, because
++  // at that point pScreen->width should correspond to real framebuffer width
++  {
++    ScreenPtr pScreen = screenInfo.screens[0];
++    vfbScreenInfoPtr pvfb = &vfbScreens[0];
++    int dpi = monitorResolution ? monitorResolution : 100;
++    pScreen->width = pvfb->rrScreenSizes[0].width;
++    pScreen->height = pvfb->rrScreenSizes[0].height;
++    pScreen->mmWidth = (pScreen->width * 254 + dpi * 5) / (dpi * 10);
++    pScreen->mmHeight = (pScreen->height * 254 + dpi * 5) / (dpi * 10);
++    vncHooksResizeScreen(pScreen);
++  }
+ }
+diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/vnc/vncExtInit.cc vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/vnc/vncExtInit.cc
+--- vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/vnc/vncExtInit.cc	2005-03-11 10:08:41.000000000 -0500
++++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/xc/programs/Xserver/vnc/vncExtInit.cc	2025-10-23 19:06:40.536842404 -0400
+@@ -751,7 +751,7 @@
+   rep.timeout = qcTimeout;
+   rep.addrLen = qcTimeout ? strlen(qcAddress) : 0;
+   rep.userLen = qcTimeout ? strlen(qcUsername) : 0;
+-  rep.opaqueId = (CARD32)queryConnectId;
++  rep.opaqueId = (CARD32)(long)queryConnectId;
+   rep.length = (rep.userLen + rep.addrLen + 3) >> 2;
+   if (client->swapped) {
+     swaps(&rep.sequenceNumber, n);

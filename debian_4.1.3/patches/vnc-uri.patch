@@ -1,0 +1,17 @@
+Description: Strip vnc:// prefix from server name to support URIs
+Author: Benjamin Drung <benjamin.drung@profitbricks.com>
+Bug-Debian: https://bugs.debian.org/769891
+
+--- a/unix/vncviewer/vncviewer.cxx
++++ b/unix/vncviewer/vncviewer.cxx
+@@ -255,6 +255,10 @@
+     }
+ 
+     vncServerName = argv[i];
++    // Strip vnc:// prefix from server name
++    if (strncmp(vncServerName, "vnc://", 6) == 0) {
++      vncServerName = &vncServerName[6];
++    }
+   }
+ 
+   // Create .vnc in the user's home directory if it doesn't already exist
