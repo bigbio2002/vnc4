@@ -1,4 +1,4 @@
-gubuntu-vnc-diff-remainder.patch
+ubuntu-vnc-diff-remainder.patch
 amd64-bits-per-long-workaround.patch
 vnc4-build-ppc.patch
 arm64-support.patch
@@ -31,3 +31,6 @@ xvnc4-randr-patch-20060603.patch
 vnc4-4.1.1+X4.3.0+572678.patch
 ipv6-support.patch
 char-constant-syntax.patch
+libdeps.patch
+minmax.patch
+extern-c.patch

@@ -42,26 +42,6 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig/common/rfb/Makefile.in vnc4-4.1.1+X4.3.0.orig_
 +DIR_CXXFLAGS = -DPIC -fPIC
 +
  # followed by boilerplate.mk
-diff -Naur vnc4-4.1.1+X4.3.0.orig/common/rfb/SConnection.cxx vnc4-4.1.1+X4.3.0.orig_monopatch/common/rfb/SConnection.cxx
---- vnc4-4.1.1+X4.3.0.orig/common/rfb/SConnection.cxx	2005-03-11 10:08:41.000000000 -0500
-+++ vnc4-4.1.1+X4.3.0.orig_monopatch/common/rfb/SConnection.cxx	2025-10-23 07:26:04.714999736 -0400
-@@ -191,6 +191,16 @@
-   vlog.info("Client requests security type %s(%d)",
-             secTypeName(secType),secType);
- 
-+  std::list<rdr::U8> secTypes;
-+  std::list<rdr::U8>::iterator i;
-+  securityFactory->getSecTypes(&secTypes, reverseConnection);
-+  for (i=secTypes.begin(); i!=secTypes.end(); i++)
-+    if (*i == secType)
-+      break;
-+
-+  if (*i != secType)
-+    throwConnFailedException("Unexpected security type");
-+
-   try {
-     state_ = RFBSTATE_SECURITY;
-     security = securityFactory->getSSecurity(secType, reverseConnection);
 diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/boilerplate.mk vnc4-4.1.1+X4.3.0.orig_monopatch/unix/boilerplate.mk
 --- vnc4-4.1.1+X4.3.0.orig/unix/boilerplate.mk	2004-07-07 10:21:49.000000000 -0400
 +++ vnc4-4.1.1+X4.3.0.orig_monopatch/unix/boilerplate.mk	2025-10-23 07:26:04.730999736 -0400

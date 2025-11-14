@@ -1,0 +1,61 @@
+--- ./unix/xc/programs/Xserver/vnc/XserverDesktop.h
++++ ./unix/xc/programs/Xserver/vnc/XserverDesktop.h
+@@ -29,12 +29,16 @@
+ #include <rfb/VNCServerST.h>
+ #include <rdr/SubstitutingInStream.h>
+ 
++#ifdef __cplusplus
+ extern "C" {
++#endif
+ #define class c_class;
+ #include <scrnintstr.h>
+ #include <os.h>
+ #undef class
++#ifdef __cplusplus
+ }
++#endif
+ 
+ namespace rfb {
+   class VNCServerST;
+--- ./unix/xc/programs/Xserver/vnc/vncExtInit.cc
++++ ./unix/xc/programs/Xserver/vnc/vncExtInit.cc
+@@ -20,7 +20,9 @@
+ 
+ #include "XserverDesktop.h"
+ 
++#ifdef __cplusplus
+ extern "C" {
++#endif
+ #define class c_class
+ #define NEED_EVENTS
+ #include "X.h"
+@@ -36,7 +38,9 @@
+ #include "vncExt.h"
+ #undef class
+ #undef xalloc
++#ifdef __cplusplus
+ }
++#endif
+ 
+ #include <rfb/Configuration.h>
+ #include <rfb/Logger_stdio.h>
+@@ -57,7 +61,9 @@
+ #include "vncHooks.h"
+ #include "vncExtInit.h"
+ 
++#ifdef __cplusplus
+ extern "C" {
++#endif
+ 
+   extern void vncExtensionInit();
+   static void vncResetProc(ExtensionEntry* extEntry);
+@@ -72,7 +78,9 @@
+ 
+   extern Selection *CurrentSelections;
+   extern int NumCurrentSelections;
++#ifdef __cplusplus
+ }
++#endif
+ 
+ using namespace rfb;
+ 

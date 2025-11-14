@@ -1,0 +1,37 @@
+--- ./unix/xc/programs/lbxproxy/include/misc.h
++++ ./unix/xc/programs/lbxproxy/include/misc.h
+@@ -105,6 +105,7 @@
+ 		 ((char *) &(dst))[0] = ((char *) &(src))[1];\
+ 		 ((char *) &(dst))[1] = ((char *) &(src))[0]; }
+ 
++#undef min
+ #define min(a, b) (((a) < (b)) ? (a) : (b))
+ #define lowbit(x) ((x) & (~(x) + 1))
+ 
+--- ./unix/xc/programs/xfs/include/misc.h
++++ ./unix/xc/programs/xfs/include/misc.h
+@@ -68,6 +68,8 @@
+ #define	FALSE 0
+ #endif
+ 
++#undef min
++#undef max
+ #define	min(a, b)	(((a) < (b)) ? (a) : (b))
+ #define	max(a, b)	(((a) > (b)) ? (a) : (b))
+ 
+--- ./unix/xc/programs/Xserver/include/misc.h
++++ ./unix/xc/programs/Xserver/include/misc.h
+@@ -140,11 +140,8 @@
+ /* byte swap a short literal */
+ #define lswaps(x) ((((x) & 0xff) << 8) | (((x) >> 8) & 0xff))
+ 
+-#undef min
+-#undef max
+-
+-#define min(a, b) (((a) < (b)) ? (a) : (b))
+-#define max(a, b) (((a) > (b)) ? (a) : (b))
++#define x_min(a, b) (((a) < (b)) ? (a) : (b))
++#define x_max(a, b) (((a) > (b)) ? (a) : (b))
+ #ifndef IN_MODULE
+ /* abs() is a function, not a macro; include the file declaring
+  * it in case we haven't done that yet.

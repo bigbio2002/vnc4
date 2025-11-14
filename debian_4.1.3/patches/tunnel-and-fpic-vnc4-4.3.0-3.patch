@@ -110,7 +110,7 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig_old/unix/configure.in vnc4-4.1.1+X4.3.0.orig/u
  AC_SUBST(ZLIB_LIB)
  
 +AC_ARG_WITH(fb,
-+[AS_HELP_STRING([--with-fb], [use the new 'fb' framebuffer implementation])]
++[AS_HELP_STRING([--with-fb], [use the new 'fb' framebuffer implementation])])
 +if test "$with_installed_zlib" = yes; then
 +  echo "using 'fb' framebuffer"
 +  USE_FB=YES

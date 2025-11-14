@@ -1,0 +1,11 @@
+--- a/unix/xc/config/cf/Imake.tmpl
++++ b/unix/xc/config/cf/Imake.tmpl
+@@ -1006,7 +1006,7 @@
+ #if HasLargeTmp || SystemV4
+ #define ArCmd ArCmdBase cq
+ #else
+-#define ArCmd ArCmdBase clq
++#define ArCmd ArCmdBase cq
+ #endif
+ #endif
+ #ifndef ArAddCmd
