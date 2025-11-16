@@ -33,4 +33,4 @@ ipv6-support.patch
 char-constant-syntax.patch
 libdeps.patch
 minmax.patch
-extern-c_2.patch
+extern-c.patch
