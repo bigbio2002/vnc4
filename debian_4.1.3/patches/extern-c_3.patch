@@ -186,7 +186,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/XserverDesk
  
    // windowTable is in globals.h in XFree 4, but not in XFree 3 unfortunately
  extern WindowPtr *WindowTable;
-@@ -56,9 +60,11 @@
+@@ -56,9 +58,11 @@
  #include "windowstr.h"
  #define XK_CYRILLIC
  #include "keysym.h"
@@ -235,7 +235,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  #ifdef WIN32
  #include <X11/Xwinsock.h>
  #endif
-@@ -73,10 +75,12 @@
+@@ -75,10 +77,12 @@
  #include "keysym.h"
    extern int defaultColorVisualClass;
    extern char buildtime[];
@@ -248,7 +248,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  #ifndef VNC_USE_FB
    extern Bool cfb16ScreenInit(ScreenPtr, pointer, int, int, int, int, int);
    extern Bool cfb32ScreenInit(ScreenPtr, pointer, int, int, int, int, int);
-@@ -87,7 +91,9 @@
+@@ -91,7 +95,9 @@
    extern void cfb32GetImage(DrawablePtr, int, int, int, int, unsigned int,
                              unsigned long, char*);
  #endif
@@ -258,7 +258,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  
  #define XVNCVERSION "Free Edition 4.1.3"
  #define XVNCCOPYRIGHT ("Copyright (C) 2002-2008 RealVNC Ltd.\n" \
-@@ -179,7 +185,9 @@
+@@ -208,7 +214,9 @@
  }
  
  
@@ -268,7 +268,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  
    /* ddxInitGlobals - called by |InitGlobals| from os/util.c in XOrg */
    void ddxInitGlobals(void)
-@@ -238,7 +246,9 @@
+@@ -271,7 +279,9 @@
              "Parameter names are case-insensitive.  The parameters are:\n\n");
      rfb::Configuration::listParams(79, 14);
    }
@@ -288,7 +288,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  #if NeedFunctionPrototypes
    void DPMSSet(CARD16 level)
  #else
-@@ -977,7 +989,9 @@
+@@ -1290,7 +1302,9 @@
    {
      return FALSE;
    }
