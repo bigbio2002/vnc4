@@ -54,7 +54,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/vncExtInit.
 +++ vnc-4_1_3-unixsrc-4.1.3/unix/xc/programs/Xserver/vnc/vncExtInit.cc	2025-11-14 09:51:35.023140870 -0500
 @@ -20,8 +20,10 @@
  
- #include "XserverDesktop.h"
+ #include <stdio.h>
  
 +#ifdef __cplusplus
  extern "C" {
@@ -258,7 +258,21 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  
  #define XVNCVERSION "Free Edition 4.1.3"
  #define XVNCCOPYRIGHT ("Copyright (C) 2002-2008 RealVNC Ltd.\n" \
-@@ -208,7 +214,9 @@
+@@ -109,9 +115,13 @@
+ 
+ #ifdef RANDR
+ 
++#ifdef __cplusplus
+ extern "C" {
++#endif
+ #include <randrstr.h>
++#ifdef __cplusplus
+ }
++#endif
+ 
+ #define RR_MAX_SCREEN_SIZES	8
+ typedef struct { int width, height; } rrScreenSize;
+@@ -208,7 +218,9 @@
  }
  
  
@@ -268,7 +282,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  
    /* ddxInitGlobals - called by |InitGlobals| from os/util.c in XOrg */
    void ddxInitGlobals(void)
-@@ -271,7 +279,9 @@
+@@ -271,7 +283,9 @@
              "Parameter names are case-insensitive.  The parameters are:\n\n");
      rfb::Configuration::listParams(79, 14);
    }
@@ -278,7 +292,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  
  static bool displayNumFree(int num)
  {
-@@ -1275,7 +1285,9 @@
+@@ -1275,7 +1289,9 @@
  } /* end InitOutput */
  
  #ifdef DPMSExtension
@@ -288,7 +302,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  #if NeedFunctionPrototypes
    void DPMSSet(CARD16 level)
  #else
-@@ -1290,7 +1302,9 @@
+@@ -1290,7 +1306,9 @@
    {
      return FALSE;
    }

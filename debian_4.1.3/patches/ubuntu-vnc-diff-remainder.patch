@@ -702,7 +702,7 @@ diff -Naur vnc4-4.1.1+X4.3.0.orig/unix/xc/programs/Xserver/hw/xfree86/fbdevhw/fb
 -#include "asm/page.h"	/* #define for PAGE_* */
 +/* Added check so that asm/page.h is not included for hppa arch */
 +/* Ola Lundqvist, to work around Debian Bug#485958 & Bug#486104*/
-+#if !defined(__hppa__) && !defined(__mips__) && !defined(__alpha__)
++#if !defined(__hppa__) && !defined(__mips__) && !defined(__alpha__) && !defined(__x86_64__)
 +# include "asm/page.h"	/* #define for PAGE_* */
 +#endif
 +

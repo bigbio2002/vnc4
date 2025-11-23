@@ -1,0 +1,3 @@
+extern-c.patch - ifdefs around extern "C" and ifndefs around define class
+extern-c_2.patch - ifdefs around extern "C" only
+extern-c_3.patch - ifdefs around extern "C" and define class

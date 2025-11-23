@@ -1,0 +1,65 @@
+--- ./unix/xc/programs/xfs/include/misc.h.orig	2025-11-23 09:51:56.832805985 -0500
++++ ./unix/xc/programs/xfs/include/misc.h	2025-11-23 09:52:21.400796666 -0500
+@@ -45,8 +45,8 @@
+  */
+ /* $XFree86: xc/programs/xfs/include/misc.h,v 3.9 2001/12/14 20:01:38 dawes Exp $ */
+ 
+-#ifndef _MISC_H_
+-#define _MISC_H_
++#ifndef _XFS_MISC_H_
++#define _XFS_MISC_H_
+ 
+ #include	<X11/Xosdefs.h>
+ #include	<X11/Xfuncs.h>
+--- ./unix/xc/programs/Xserver/include/misc.h.orig	2025-11-23 09:51:56.836805984 -0500
++++ ./unix/xc/programs/Xserver/include/misc.h	2025-11-23 09:52:45.372787528 -0500
+@@ -67,8 +67,8 @@
+ 
+ ******************************************************************/
+ /* $Xorg: misc.h,v 1.5 2001/02/09 02:05:15 xorgcvs Exp $ */
+-#ifndef MISC_H
+-#define MISC_H 1
++#ifndef XSERVER_MISC_H
++#define XSERVER_MISC_H 1
+ /*
+  *  X internal definitions 
+  *
+--- ./unix/xc/programs/lbxproxy/include/misc.h.orig	2025-11-23 09:51:56.848805979 -0500
++++ ./unix/xc/programs/lbxproxy/include/misc.h	2025-11-23 09:53:06.492779443 -0500
+@@ -29,8 +29,8 @@
+ */
+ /* $XFree86: xc/programs/lbxproxy/include/misc.h,v 1.7 2001/12/14 20:00:55 dawes Exp $ */
+ 
+-#ifndef MISC_H
+-#define MISC_H 1
++#ifndef LBXPROXY_MISC_H
++#define LBXPROXY_MISC_H 1
+ 
+ #define NEED_EVENTS
+ #define NEED_REPLIES
+--- ./unix/xc/programs/xfwp/misc.h.orig	2025-11-23 09:51:56.852805978 -0500
++++ ./unix/xc/programs/xfwp/misc.h	2025-11-23 09:53:25.184772259 -0500
+@@ -30,8 +30,8 @@
+ 
+ */
+ 
+-#ifndef _MISC_H
+-#define _MISC_H
++#ifndef _XFWP_MISC_H
++#define _XFWP_MISC_H
+ 
+ /*
+  * the following are timeout defaults (in seconds) on the three
+--- ./unix/xc/programs/xkbcomp/misc.h.orig	2025-11-23 09:51:56.856805976 -0500
++++ ./unix/xc/programs/xkbcomp/misc.h	2025-11-23 09:53:44.940764666 -0500
+@@ -26,8 +26,8 @@
+  ********************************************************/
+ /* $XFree86: xc/programs/xkbcomp/misc.h,v 1.5 2002/07/01 02:26:01 tsi Exp $ */
+ 
+-#ifndef MISC_H
+-#define MISC_H 1
++#ifndef XKBCOMP_MISC_H
++#define XKBCOMP_MISC_H 1
+ 
+ typedef	struct	_CommonInfo {
+     unsigned short		defined;

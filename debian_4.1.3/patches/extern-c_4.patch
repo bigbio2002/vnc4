@@ -59,7 +59,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/vncExtInit.
 +#ifdef __cplusplus
  extern "C" {
 +#endif
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #define class c_class
 +#endif
  #define NEED_EVENTS
@@ -69,7 +69,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/vncExtInit.
  #define _VNCEXT_SERVER_
  #define _VNCEXT_PROTO_
  #include "vncExt.h"
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #undef class
 +#endif
  #undef xalloc
@@ -109,7 +109,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/vncHooks.cc
 +#ifdef __cplusplus
  extern "C" {
 +#endif
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #define class c_class
  #define private c_private
 +#endif
@@ -120,7 +120,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/vncHooks.cc
    (((mfbPrivGCPtr)((gc)->devPrivates[mfbGCPrivateIndex].ptr))->pCompositeClip)
  #endif
  
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #undef class
  #undef private
 +#endif
@@ -157,7 +157,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/xf86vncModu
 +#ifdef __cplusplus
  extern "C" {
 +#endif
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #define class c_class
  #define private c_private
  #define bool c_bool
@@ -165,7 +165,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/xf86vncModu
 +#endif
  #include "xf86.h"
  #include "xf86Module.h"
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #undef class
  #undef private
  #undef bool
@@ -191,7 +191,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/XserverDesk
 +#ifdef __cplusplus
  extern "C" {
 +#endif
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #define public c_public
  #define class c_class
 +#endif
@@ -202,7 +202,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/XserverDesk
  #include "windowstr.h"
  #define XK_CYRILLIC
  #include "keysym.h"
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #undef public
  #undef class
 +#endif
@@ -222,12 +222,12 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/XserverDesk
 +#ifdef __cplusplus
  extern "C" {
 +#endif
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #define class c_class;
 +#endif
  #include <scrnintstr.h>
  #include <os.h>
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #undef class
 +#endif
 +#ifdef __cplusplus
@@ -246,7 +246,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
 +#ifdef __cplusplus
  extern "C" {
 +#endif
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #define class c_class
  #define public c_public
  #define xor c_xor
@@ -259,7 +259,7 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  #include "keysym.h"
    extern int defaultColorVisualClass;
    extern char buildtime[];
-+#ifndef __cplusplus
++#ifdef __cplusplus
  #undef class
  #undef public
  #undef xor
@@ -470,101 +470,3 @@ diff -Naur vnc-4_1_3-unixsrc-4.1.3.orig/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.c
  
  typedef struct _entityInfo {
      int index;
---- ./unix/xc/programs/Xserver/hw/xfree86/common/xf86.h.orig	2025-11-23 10:53:14.914815481 -0500
-+++ ./unix/xc/programs/Xserver/hw/xfree86/common/xf86.h	2025-11-23 10:58:30.190649875 -0500
-@@ -139,7 +139,11 @@
- resPtr xf86FindIntersectOfLists(resPtr l1, resPtr l2);
- pciVideoPtr xf86FindPciDeviceVendor(CARD16 vendorID, CARD16 deviceID,
- 				    char n, pciVideoPtr pvp_exclude);
-+#ifdef __cplusplus
-+pciVideoPtr xf86FindPciClass(CARD8 intf, CARD8 subClass, CARD16 c_class,
-+#else
- pciVideoPtr xf86FindPciClass(CARD8 intf, CARD8 subClass, CARD16 class,
-+#endif
- 			     char n, pciVideoPtr pvp_exclude);
- #ifdef INCLUDE_DEPRECATED
- void xf86EnablePciBusMaster(pciVideoPtr pPci, Bool enable);
-@@ -201,7 +205,11 @@
- void xf86DisableInputHandler(pointer handler);
- void xf86EnableInputHandler(pointer handler);
- void xf86InterceptSignals(int *signo);
-+#ifdef __cplusplus
-+Bool xf86EnableVTSwitch(Bool c_new);
-+#else
- Bool xf86EnableVTSwitch(Bool new);
-+#endif
- Bool xf86CommonSpecialKey(int key, Bool down, int modifiers);
- void xf86ProcessActionEvent(ActionEvent action, void *arg);
- 
-@@ -294,39 +302,71 @@
- 				int entityIndex,PciChipsets *p_chip,
- 				resList res, EntityProc init,
- 				EntityProc enter, EntityProc leave,
-+#ifdef __cplusplus
-+				pointer c_private);
-+#else
- 				pointer private);
-+#endif
- ScrnInfoPtr xf86ConfigIsaEntity(ScrnInfoPtr pScrn, int scrnFlag,
- 				int entityIndex, IsaChipsets *i_chip,
- 				resList res, EntityProc init,
- 				EntityProc enter, EntityProc leave,
-+#ifdef __cplusplus
-+				pointer c_private); 
-+#else
- 				pointer private); 
-+#endif
- ScrnInfoPtr xf86ConfigFbEntity(ScrnInfoPtr pScrn, int scrnFlag, 
- 			       int entityIndex, EntityProc init, 
- 			       EntityProc enter, EntityProc leave, 
-+#ifdef __cplusplus
-+			       pointer c_private);
-+#else
- 			       pointer private);
-+#endif
- /* Obsolete! don't use */
- Bool xf86ConfigActivePciEntity(ScrnInfoPtr pScrn,
- 				int entityIndex,PciChipsets *p_chip,
- 				resList res, EntityProc init,
- 				EntityProc enter, EntityProc leave,
-+#ifdef __cplusplus
-+				pointer c_private);
-+#else
- 				pointer private);
-+#endif
- /* Obsolete! don't use */
- Bool xf86ConfigActiveIsaEntity(ScrnInfoPtr pScrn,
- 				int entityIndex, IsaChipsets *i_chip,
- 				resList res, EntityProc init,
- 				EntityProc enter, EntityProc leave,
-+#ifdef __cplusplus
-+				pointer c_private); 
-+#else
- 				pointer private); 
-+#endif
- void xf86ConfigPciEntityInactive(EntityInfoPtr pEnt, PciChipsets *p_chip,
- 				 resList res, EntityProc init,
- 				 EntityProc enter, EntityProc leave,
-+#ifdef __cplusplus
-+				 pointer c_private);
-+#else
- 				 pointer private);
-+#endif
- void xf86ConfigIsaEntityInactive(EntityInfoPtr pEnt, IsaChipsets *i_chip,
- 				 resList res, EntityProc init,
- 				 EntityProc enter, EntityProc leave,
-+#ifdef __cplusplus
-+				 pointer c_private);
-+#else
- 				 pointer private);
-+#endif
- void xf86ConfigFbEntityInactive(EntityInfoPtr pEnt, EntityProc init, 
- 				EntityProc enter, EntityProc leave, 
-+#ifdef __cplusplus
-+				pointer c_private);
-+#else
- 				pointer private);
-+#endif
- Bool xf86IsScreenPrimary(int scrnIndex);
- int  xf86RegisterRootWindowProperty(int ScrnIndex, Atom	property, Atom type,
- 				    int format, unsigned long len,

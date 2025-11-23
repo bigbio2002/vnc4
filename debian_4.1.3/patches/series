@@ -16,7 +16,7 @@ vncsofpicfix.patch
 tunnel-and-fpic-vnc4-4.3.0-3.patch
 vnc-4.0-x0vncserver-localhost.patch
 vnc-uri.patch
-vnc-vnconnect-on-x86_64.patch
+#vnc-vnconnect-on-x86_64.patch
 vnc4-passwd-jkohen.patch
 vnc4server-fix-100-percent-cpu-hang-in-inetd-mode.patch
 vncserver-ipv6-v2.patch
@@ -32,5 +32,6 @@ vnc4-4.1.1+X4.3.0+572678.patch
 ipv6-support.patch
 char-constant-syntax.patch
 libdeps.patch
-minmax.patch
+#minmax.patch
+misc.h.patch
 extern-c.patch
