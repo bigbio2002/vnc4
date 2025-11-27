@@ -1,0 +1,11 @@
+--- ./unix/vncviewer/vncviewer.cxx.orig	2025-11-23 22:12:04.905236561 -0500
++++ ./unix/vncviewer/vncviewer.cxx	2025-11-23 22:12:47.793236545 -0500
+@@ -313,7 +313,7 @@
+         if (pid == 0) break; // child
+         delete sock;
+         int status;
+-        while (wait3(&status, WNOHANG, 0) > 0) ;
++        while (waitpid(-1, &status, WNOHANG) > 0) ;
+       }
+     }
+ 

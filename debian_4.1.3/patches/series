@@ -34,4 +34,5 @@ char-constant-syntax.patch
 libdeps.patch
 #minmax.patch
 misc.h.patch
+wait3.patch
 extern-c.patch
