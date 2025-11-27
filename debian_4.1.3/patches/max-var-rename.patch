@@ -1,0 +1,226 @@
+--- ./unix/xc/programs/Xserver/hw/xfree86/xaa/xaaPCache.c.orig	2025-11-27 15:44:50.610985763 -0500
++++ ./unix/xc/programs/Xserver/hw/xfree86/xaa/xaaPCache.c	2025-11-27 15:47:38.838830882 -0500
+@@ -1441,26 +1441,26 @@
+    XAAPixmapCachePrivatePtr pCachePriv = 
+ 	(XAAPixmapCachePrivatePtr)infoRec->PixmapCachePrivate;
+    XAACacheInfoPtr pCache, cacheRoot = NULL;
+-   int i, max = 0;
++   int i, i_max = 0;
+    int *current;
+ 
+    if(size <= 128) {
+ 	if(pCachePriv->Info128) {
+ 	    cacheRoot = pCachePriv->Info128; 
+-	    max = pCachePriv->Num128x128;
++	    i_max = pCachePriv->Num128x128;
+ 	    current = &pCachePriv->Current128;
+ 	} else {     
+ 	    cacheRoot = pCachePriv->InfoPartial;
+-	    max = pCachePriv->NumPartial;
++	    i_max = pCachePriv->NumPartial;
+ 	    current = &pCachePriv->CurrentPartial;
+ 	}
+    } else if(size <= 256) {
+ 	cacheRoot = pCachePriv->Info256;      
+-	max = pCachePriv->Num256x256;
++	i_max = pCachePriv->Num256x256;
+ 	current = &pCachePriv->Current256;
+    } else if(size <= 512) {
+ 	cacheRoot = pCachePriv->Info512;      
+-	max = pCachePriv->Num512x512;
++	i_max = pCachePriv->Num512x512;
+ 	current = &pCachePriv->Current512;
+    } else { /* something's wrong */ 
+ 	ErrorF("Something's wrong in XAACacheTile()\n");
+@@ -1470,7 +1470,7 @@
+    pCache = cacheRoot;
+ 
+    /* lets look for it */
+-   for(i = 0; i < max; i++, pCache++) {
++   for(i = 0; i < i_max; i++, pCache++) {
+ 	if(pCache->serialNumber == pPix->drawable.serialNumber) {
+ 	    pCache->trans_color = -1;
+ 	    return pCache;
+@@ -1478,7 +1478,7 @@
+    }
+ 
+    pCache = &cacheRoot[(*current)++];
+-   if(*current >= max) *current = 0;
++   if(*current >= i_max) *current = 0;
+ 
+    pCache->serialNumber = pPix->drawable.serialNumber;
+    pCache->trans_color = pCache->bg = pCache->fg = -1;
+@@ -1502,7 +1502,7 @@
+    XAAPixmapCachePrivatePtr pCachePriv = 
+ 	(XAAPixmapCachePrivatePtr)infoRec->PixmapCachePrivate;
+    XAACacheInfoPtr pCache, cacheRoot = NULL;
+-   int i, max = 0, funcNo, pad, dwords, bpp = pScrn->bitsPerPixel;
++   int i, i_max = 0, funcNo, pad, dwords, bpp = pScrn->bitsPerPixel;
+    int *current;
+    StippleScanlineProcPtr StippleFunc;
+    unsigned char *data, *srcPtr, *dstPtr;
+@@ -1510,20 +1510,20 @@
+    if((h <= 128) && (w <= 128 * bpp)) {
+ 	if(pCachePriv->Info128) {
+ 	    cacheRoot = pCachePriv->Info128; 
+-	    max = pCachePriv->Num128x128;
++	    i_max = pCachePriv->Num128x128;
+ 	    current = &pCachePriv->Current128;
+ 	} else {     
+ 	    cacheRoot = pCachePriv->InfoPartial;
+-	    max = pCachePriv->NumPartial;
++	    i_max = pCachePriv->NumPartial;
+ 	    current = &pCachePriv->CurrentPartial;
+ 	}
+    } else if((h <= 256) && (w <= 256 * bpp)){
+ 	cacheRoot = pCachePriv->Info256;      
+-	max = pCachePriv->Num256x256;
++	i_max = pCachePriv->Num256x256;
+ 	current = &pCachePriv->Current256;
+    } else if((h <= 512) && (w <= 526 * bpp)){
+ 	cacheRoot = pCachePriv->Info512;      
+-	max = pCachePriv->Num512x512;
++	i_max = pCachePriv->Num512x512;
+ 	current = &pCachePriv->Current512;
+    } else { /* something's wrong */ 
+ 	ErrorF("Something's wrong in XAACacheMonoStipple()\n");
+@@ -1533,7 +1533,7 @@
+    pCache = cacheRoot;
+ 
+    /* lets look for it */
+-   for(i = 0; i < max; i++, pCache++) {
++   for(i = 0; i < i_max; i++, pCache++) {
+ 	if((pCache->serialNumber == pPix->drawable.serialNumber) &&
+ 	    (pCache->fg == -1) && (pCache->bg == -1)) {
+ 	    pCache->trans_color = -1;
+@@ -1542,7 +1542,7 @@
+    }
+ 
+    pCache = &cacheRoot[(*current)++];
+-   if(*current >= max) *current = 0;
++   if(*current >= i_max) *current = 0;
+ 
+    pCache->serialNumber = pPix->drawable.serialNumber;
+    pCache->trans_color = pCache->bg = pCache->fg = -1;
+@@ -1564,9 +1564,9 @@
+ 	StippleFunc = XAAStippleScanlineFuncLSBFirst[funcNo];
+ 
+    /* don't bother generating more than we'll ever use */
+-   max = ((pScrn->displayWidth + w - 1) + 31) >> 5;
+-   if(dwords > max)
+-	dwords = max;
++   i_max = ((pScrn->displayWidth + w - 1) + 31) >> 5;
++   if(dwords > i_max)
++	dwords = i_max;
+ 
+    for(i = 0; i < h; i++) {
+ 	(*StippleFunc)((CARD32*)dstPtr, (CARD32*)srcPtr, 0, w, dwords);
+@@ -1600,26 +1600,26 @@
+    XAAPixmapCachePrivatePtr pCachePriv = 
+ 	(XAAPixmapCachePrivatePtr)infoRec->PixmapCachePrivate;
+    XAACacheInfoPtr pCache, cacheRoot = NULL;
+-   int i, max = 0;
++   int i, i_max = 0;
+    int *current;
+ 
+    if((h <= 128) && (w <= 128)) {
+ 	if(pCachePriv->Info128) {
+ 	    cacheRoot = pCachePriv->Info128; 
+-	    max = pCachePriv->Num128x128;
++	    i_max = pCachePriv->Num128x128;
+ 	    current = &pCachePriv->Current128;
+ 	} else {     
+ 	    cacheRoot = pCachePriv->InfoPartial;
+-	    max = pCachePriv->NumPartial;
++	    i_max = pCachePriv->NumPartial;
+ 	    current = &pCachePriv->CurrentPartial;
+ 	}
+    } else if((h <= 256) && (w <= 256)){
+ 	cacheRoot = pCachePriv->Info256;      
+-	max = pCachePriv->Num256x256;
++	i_max = pCachePriv->Num256x256;
+ 	current = &pCachePriv->Current256;
+    } else if((h <= 512) && (w <= 526)){
+ 	cacheRoot = pCachePriv->Info512;      
+-	max = pCachePriv->Num512x512;
++	i_max = pCachePriv->Num512x512;
+ 	current = &pCachePriv->Current512;
+    } else { /* something's wrong */ 
+ 	ErrorF("Something's wrong in XAACachePlanarMonoStipple()\n");
+@@ -1629,7 +1629,7 @@
+    pCache = cacheRoot;
+ 
+    /* lets look for it */
+-   for(i = 0; i < max; i++, pCache++) {
++   for(i = 0; i < i_max; i++, pCache++) {
+ 	if((pCache->serialNumber == pPix->drawable.serialNumber) &&
+ 	    (pCache->fg == -1) && (pCache->bg == -1)) {
+ 	    pCache->trans_color = -1;
+@@ -1638,7 +1638,7 @@
+    }
+ 
+    pCache = &cacheRoot[(*current)++];
+-   if(*current >= max) *current = 0;
++   if(*current >= i_max) *current = 0;
+ 
+    pCache->serialNumber = pPix->drawable.serialNumber;
+    pCache->trans_color = pCache->bg = pCache->fg = -1;
+@@ -1667,26 +1667,26 @@
+    XAAPixmapCachePrivatePtr pCachePriv = 
+ 	(XAAPixmapCachePrivatePtr)infoRec->PixmapCachePrivate;
+    XAACacheInfoPtr pCache, cacheRoot = NULL;
+-   int i, max = 0;
++   int i, i_max = 0;
+    int *current;
+ 
+    if(size <= 128) {
+ 	if(pCachePriv->Info128) {
+ 	    cacheRoot = pCachePriv->Info128; 
+-	    max = pCachePriv->Num128x128;
++	    i_max = pCachePriv->Num128x128;
+ 	    current = &pCachePriv->Current128;
+ 	} else {     
+ 	    cacheRoot = pCachePriv->InfoPartial;
+-	    max = pCachePriv->NumPartial;
++	    i_max = pCachePriv->NumPartial;
+ 	    current = &pCachePriv->CurrentPartial;
+ 	}
+    } else if(size <= 256) {
+ 	cacheRoot = pCachePriv->Info256;      
+-	max = pCachePriv->Num256x256;
++	i_max = pCachePriv->Num256x256;
+ 	current = &pCachePriv->Current256;
+    } else if(size <= 512) {
+ 	cacheRoot = pCachePriv->Info512;      
+-	max = pCachePriv->Num512x512;
++	i_max = pCachePriv->Num512x512;
+ 	current = &pCachePriv->Current512;
+    } else { /* something's wrong */
+ 	ErrorF("Something's wrong in XAACacheStipple()\n");
+@@ -1696,7 +1696,7 @@
+    pCache = cacheRoot;
+    /* lets look for it */
+    if(bg == -1)
+-	for(i = 0; i < max; i++, pCache++) {
++	for(i = 0; i < i_max; i++, pCache++) {
+ 	    if((pCache->serialNumber == pPix->drawable.serialNumber) &&
+ 		(fg == pCache->fg) && (pCache->fg != pCache->bg)) {
+ 		pCache->trans_color = pCache->bg;
+@@ -1704,7 +1704,7 @@
+ 	     }
+ 	}
+    else
+-	for(i = 0; i < max; i++, pCache++) {
++	for(i = 0; i < i_max; i++, pCache++) {
+ 	    if((pCache->serialNumber == pPix->drawable.serialNumber) &&
+ 		(fg == pCache->fg) && (bg == pCache->bg)) {
+ 		pCache->trans_color = -1;
+@@ -1713,7 +1713,7 @@
+ 	}
+ 
+    pCache = &cacheRoot[(*current)++];
+-   if(*current >= max) *current = 0;
++   if(*current >= i_max) *current = 0;
+ 
+    pCache->serialNumber = pPix->drawable.serialNumber;
+    pCache->fg = fg;

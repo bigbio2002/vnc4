@@ -35,3 +35,16 @@
  #ifndef IN_MODULE
  /* abs() is a function, not a macro; include the file declaring
   * it in case we haven't done that yet.
+--- ./unix/xc/programs/Xserver/vnc/vncExtInit.cc
++++ ./unix/xc/programs/Xserver/vnc/vncExtInit.cc
+@@ -52,8 +52,10 @@
+ #include <rfb/SSecurityFactoryStandard.h>
+ #include <rdr/HexOutStream.h>
+ #include <rfb/LogWriter.h>
++#if 0
+ #undef max
+ #undef min
++#endif
+ #include <network/TcpSocket.h>
+ 
+ #include "XserverDesktop.h"

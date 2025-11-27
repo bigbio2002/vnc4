@@ -1,4 +1,5 @@
 ubuntu-vnc-diff-remainder.patch
+#hppa-page.h.patch
 amd64-bits-per-long-workaround.patch
 vnc4-build-ppc.patch
 arm64-support.patch
@@ -33,6 +34,8 @@ ipv6-support.patch
 char-constant-syntax.patch
 libdeps.patch
 #minmax.patch
+minmax2.patch
+max-var-rename.patch
 misc.h.patch
-wait3.patch
+#wait3.patch
 extern-c.patch
