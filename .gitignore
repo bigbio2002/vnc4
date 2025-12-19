@@ -1,0 +1,14 @@
+X4*.tgz
+X430.patch.xz
+*.diff.gz
+*.diff.gz.asc
+
+*.log
+buildlog-bookmark.txt
+
+vnc4_4.1.1+xorg4.3.0-37.3ubuntu2.diff
+*.dsc
+*.build
+
+*.tar.gz
+*.tar.xz
