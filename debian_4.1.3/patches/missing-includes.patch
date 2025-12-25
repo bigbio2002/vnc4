@@ -1,0 +1,15 @@
+--- ./unix/xc/config/util/printver.c
++++ ./unix/xc/config/util/printver.c
+@@ 8,10 +8,11 @@
+ /* $XFree86: xc/config/util/printver.c,v 1.2 2003/02/26 09:21:33 dawes Exp $ */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ #include "xf86Version.h"
+ #include "xf86Date.h"
+ 
+-main()
++int main()
+ {
+ #ifdef XF86_VERSION_MAJOR
+ 	printf(" version %d.%d.%d", XF86_VERSION_MAJOR, XF86_VERSION_MINOR,

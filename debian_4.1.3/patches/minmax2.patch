@@ -1,16 +1,40 @@
 --- ./unix/xc/programs/Xserver/include/misc.h
 +++ ./unix/xc/programs/Xserver/include/misc.h
-@@ -140,11 +140,8 @@
+@@ -140,8 +140,12 @@
  /* byte swap a short literal */
  #define lswaps(x) ((((x) & 0xff) << 8) | (((x) >> 8) & 0xff))
  
--#undef min
--#undef max
--
--#define min(a, b) (((a) < (b)) ? (a) : (b))
--#define max(a, b) (((a) > (b)) ? (a) : (b))
-+#define x_min(a, b) (((a) < (b)) ? (a) : (b))
-+#define x_max(a, b) (((a) > (b)) ? (a) : (b))
++#ifdef min
+ #undef min
++#endif
++#ifdef max
+ #undef max
++#endif
+ 
+ #define min(a, b) (((a) < (b)) ? (a) : (b))
+ #define max(a, b) (((a) > (b)) ? (a) : (b))
+@@ -173,8 +177,7 @@
  #ifndef IN_MODULE
- /* abs() is a function, not a macro; include the file declaring
-  * it in case we haven't done that yet.
+ /* XXX Not for modules */
+ #include <limits.h>
+-#if !defined(MAXSHORT) || !defined(MINSHORT) || \
+-    !defined(MAXINT) || !defined(MININT)
++#if 0
+ /*
+  * Some implementations #define these through <math.h>, so preclude
+  * #include'ing it later.
+--- ./unix/xc/programs/Xserver/vnc/vncExtInit.cc
++++ ./unix/xc/programs/Xserver/vnc/vncExtInit.cc
+@@ -52,8 +52,12 @@
+ #include <rfb/SSecurityFactoryStandard.h>
+ #include <rdr/HexOutStream.h>
+ #include <rfb/LogWriter.h>
++#ifdef max
+ #undef max
++#endif
++#ifdef min
+ #undef min
++#endif
+ #include <network/TcpSocket.h>
+ 
+ #include "XserverDesktop.h"

@@ -18,8 +18,8 @@ export DH_OPTIONS
 
 
 
-CFLAGS = -Wall -g
-CXXFLAGS = -Wall -g
+CFLAGS = -Wall -g -std=c99
+CXXFLAGS = -Wall -g -std=c++11
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0
@@ -50,16 +50,16 @@ configure-unix-stamp:
 		--with-installed-zlib)
 	touch configure-unix-stamp
 
-#Architecture 
+# Architecture
 build: build-arch build-indep
 
 build-arch: build-arch-unix-stamp build-arch-common-stamp build-arch-x-stamp
 
 build-arch-x-stamp: build-arch-common-stamp build-arch-unix-stamp
-	(cd unix/xc; make World)
+	(cd unix/xc; $(MAKE) World)
 	touch build-arch-x-stamp
 
-build-arch-common-stamp: configure-common-stamp 
+build-arch-common-stamp: configure-common-stamp
 	(cd common; $(MAKE))
 	touch build-arch-common-stamp
 
@@ -99,13 +99,13 @@ clean:
 		common/Makefile
 	-rm -f unix/config.log unix/config.cache unix/config.status
 	-rm -f common/config.log common/config.cache common/config.status
-	dh_clean 
+	dh_clean
 
 install: install-indep install-arch
 install-indep:
 #	dh_testdir
 #	dh_testroot
-#	dh_clean -k -i 
+#	dh_prep
 #	dh_installdirs -i
 #
 #	# Add here commands to install the indep part of the package into
@@ -116,8 +116,8 @@ install-indep:
 install-arch:
 	dh_testdir
 	dh_testroot
-	dh_clean -k -s 
-	dh_installdirs -s
+	dh_prep
+	dh_installdirs -a
 
 	# Add here commands to install the arch part of the package into 
 	# debian/tmp.
@@ -129,14 +129,14 @@ install-arch:
 		$(CURDIR)/debian/tmp/usr/bin \
 		$(CURDIR)/debian/tmp/usr/share/man \
 		$(CURDIR)/debian/tmp/usr/lib/xorg/modules/extensions)
-	rename "s/vncviewer/xvncviewer/;" \
+	rename.ul vncviewer xvncviewer \
 		debian/tmp/usr/bin/* \
 		debian/tmp/usr/share/man/man1/*
-	rename "s/vnc/vnc4/;" \
+	rename.ul vnc vnc4 \
 		debian/tmp/usr/bin/* \
 		debian/tmp/usr/share/man/man1/*
 	-rm -f	debian/tmp/usr/lib/xorg/modules/extensions/*vnc.so
-	dh_install -s
+	dh_install -a
 
 # Must not depend on anything. This is to be called by
 # binary-arch/binary-indep
@@ -153,8 +153,8 @@ binary-indep-for-later:
 	dh_installdocs -i
 	dh_installexamples -i
 	dh_installmenu -i
-#	dh_installdebconf	
-#	dh_installlogrotate	
+#	dh_installdebconf
+#	dh_installlogrotate
 #	dh_installemacsen
 #	dh_installpam
 #	dh_installmime
@@ -163,7 +163,7 @@ binary-indep-for-later:
 #	dh_installinfo
 	dh_installman -i
 	dh_link -i
-	dh_compress -i 
+	dh_compress -i
 	dh_fixperms -i
 #	dh_perl
 #	dh_python
@@ -182,8 +182,8 @@ binary-arch: build-arch install-arch
 	dh_installdocs -a
 	dh_installexamples -a
 	dh_installmenu -a
-#	dh_installdebconf	
-#	dh_installlogrotate	
+#	dh_installdebconf
+#	dh_installlogrotate
 #	dh_installemacsen
 #	dh_installpam
 #	dh_installmime

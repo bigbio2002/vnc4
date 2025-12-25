@@ -1,5 +1,5 @@
 ubuntu-vnc-diff-remainder.patch
-#hppa-page.h.patch
+hppa-page.h.patch
 amd64-bits-per-long-workaround.patch
 vnc4-build-ppc.patch
 arm64-support.patch
@@ -39,3 +39,5 @@ max-var-rename.patch
 misc.h.patch
 #wait3.patch
 extern-c.patch
+default_source.patch
+missing-includes.patch
